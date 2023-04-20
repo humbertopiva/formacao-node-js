@@ -7,6 +7,12 @@
     <title>Lista de Games</title>
 </head>
 <body>
+
+    <h2>Login</h2>
+    <input type="text" name="email" id="email" placeholder="victor@email.com">
+    <input type="password" name="password" id="password" placeholder="***********">
+    <button onclick="login()">Entrar</button>
+
     <hr>
     <h4>Lista da games</h4>
     <ul id="games"></ul>
@@ -27,6 +33,32 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
 
+var axiosConfig = {
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem("access_token")
+        }
+    }
+
+    function login() {
+        const emailField = document.getElementById("email");
+        const passwordField = document.getElementById("password");
+
+        const email = emailField.value;
+        const password = passwordField.value;
+
+        axios.post("http://localhost:45678/auth", {
+            email, 
+            password
+        }).then(response => {
+            const token = response.data.token;
+
+            localStorage.setItem('access_token', token);
+            axiosConfig.headers.Authorization = "Bearer " + localStorage.getItem("access_token");
+        }).catch(err => {
+            console.log(err);
+        })
+    }
+
     function createGame() {
         var titleInput = document.getElementById("title");
         var yearInput = document.getElementById("year");
@@ -38,7 +70,7 @@
             price: priceInput.value,
         }
 
-        axios.post("http://localhost:45678/game", game);
+        axios.post("http://localhost:45678/game", game, axiosConfig);
     }
 
     function deleteGame(id) {
@@ -82,7 +114,7 @@
 
         const id = idInput.value;
 
-        axios.put(`http://localhost:45678/game/${id}`, game).then(response => {
+        axios.put(`http://localhost:45678/game/${id}`, game, axiosConfig).then(response => {
             if(response.status == 200) {
                 alert("Game cadastrado!");
             }
@@ -91,7 +123,7 @@
         });
     }
 
-    axios.get("http://localhost:45678/games").then(response => {
+    axios.get("http://localhost:45678/games", axiosConfig).then(response => {
         var games = response.data;
         var list = document.getElementById("games");
         games.forEach(game => {
