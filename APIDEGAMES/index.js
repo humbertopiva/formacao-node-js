@@ -45,14 +45,35 @@ var DB = {
 };
 
 app.get("/games", auth, (req, res) => {
+
+    var HATEOAS = [
+        {
+            href: "http://localhost:45678/game/0",
+            method: "DELETE",
+            rel: "delete_game"
+        },
+        {
+            href: "http://localhost:45678/games",
+            method: "GET",
+            rel: "get_game"
+        },
+        {
+            href: "http://localhost:45678/auth/0",
+            method: "POST",
+            rel: "login"
+        },
+    ];
+
+
     res.statusCode = 200;
-    res.json(DB.games);
+    res.json({games: DB.games, _links: HATEOAS});
 })
 
 app.get("/game/:id", (req, res) => {
     const id = req.params.id;
 
     if(isNaN(id)) {
+
         res.status(400).json("Formato inválido.");
     }
 
@@ -62,7 +83,25 @@ app.get("/game/:id", (req, res) => {
         res.status(404).json("Game não encontrado.");
     }
 
-    res.send(game);
+    var HATEOAS = [
+        {
+            href: `http://localhost:45678/game/${id}`,
+            method: "DELETE",
+            rel: "delete_game"
+        },
+        {
+            href: `http://localhost:45678/game/${id}`,
+            method: "GET",
+            rel: "get_game"
+        },
+        {
+            href: `http://localhost:45678/game/${id}`,
+            method: "PUT",
+            rel: "edit_game"
+        },
+    ];
+
+    res.send({game, _links: HATEOAS});
 })
 
 app.post("/game", (req, res) => {
