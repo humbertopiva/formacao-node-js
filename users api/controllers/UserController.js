@@ -8,6 +8,7 @@ const secret = "ratanaba";
 class UserController {
     async all(req, res) {
         const users = await User.all();
+
         return res.json(users);
     }
 
@@ -100,7 +101,7 @@ class UserController {
         const {email, password} = req.body;
 
         const user = await User.findByEmail(email);
-        
+
         if(user == undefined) {
             return res.status(406).json({error: "Email ou usuário incorreto."});
         }

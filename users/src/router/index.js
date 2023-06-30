@@ -1,5 +1,28 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import axios from 'axios';
+
+function AdminAuth(to, from, next) {
+  const token = localStorage.getItem('token');
+  if(token) {
+
+    const req = {
+      headers: {
+        Authorization: 'Bearer ' +  token
+      }
+    };
+
+    axios.post("http://localhost:8686/validate", {}, req).then(response => {
+      console.log(response);
+      next();
+    }).catch(error => {
+      console.log(error);
+      next('/login');
+    })
+  } else {
+    next('/login');
+  }
+}
 
 const routes = [
   {
@@ -19,6 +42,17 @@ const routes = [
     path: '/register',
     name: 'register',
     component: () => import(/* webpackChunkName: "about" */ '../views/Register.vue')
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import(/* webpackChunkName: "about" */ '../views/Login.vue')
+  },
+  {
+    path: '/admin/users',
+    name: 'users',
+    component: () => import(/* webpackChunkName: "about" */ '../views/Users.vue'),
+    beforeEnter: AdminAuth
   },
 ]
 

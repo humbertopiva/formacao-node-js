@@ -5,7 +5,7 @@ class User {
 
     async all() {
         try {
-            return await knex.select(["id", "name", "email"]).from("user");
+            return await knex.select(["id", "name", "role", "email"]).from("user");
         }catch(err) {
             console.log(err);
             return [];
@@ -15,7 +15,7 @@ class User {
     async new(name, email, password) {
         try {
             var hash = await bcrypt.hash(password, 10);
-            await knex.insert({name, email, password: hash}).table("user");
+            await knex.insert({name, email, password: hash, role: 0}).table("user");
         }catch(err) {
             console.log(err);
             return err;
