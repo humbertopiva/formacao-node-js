@@ -54,6 +54,12 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/Users.vue'),
     beforeEnter: AdminAuth
   },
+  {
+    path: '/admin/users/:id',
+    name: 'user-show',
+    component: () => import(/* webpackChunkName: "about" */ '../views/Edit.vue'),
+    beforeEnter: AdminAuth
+  },
 ]
 
 const router = createRouter({
