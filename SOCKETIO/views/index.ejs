@@ -6,28 +6,35 @@
     <title>Document</title>
 </head>
 <body>
-    <input type="text" id="palavra" oninput="enviar()">
-    <button>Enviar</button>
-    <hr>
+    <div id="chat" style="height: 500px; background-color: aliceblue; overflow-y: scroll;"> 
+
+    </div>
+    <h1>CHAT</h1>
+    <input type="text" id="message" placeholder="Mensagem">
+    <input type="text" id="username" placeholder="Nome de usuário">
+    <button onclick="send()">Enviar</button>
 </body>
 </html>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js" integrity="sha512-zoJXRvW2gC8Z0Xo3lBbao5+AS3g6YWr5ztKqaicua11xHo+AvE1b0lT9ODgrHTmNUxeCw0Ry4BGRYZfXu70weg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
     var socket = io("http://localhost:3000");
 
+    socket.on("message:show", data => {
+        const chat = document.getElementById("chat");
+        const p = document.createElement("p");
+        p.innerHTML = `${data.username}: ${data.message}`;
+
+        chat.append(p);
+    });
+
     socket.on("disconnect", () => {
 
-    })
+    });
 
-    socket.emit("boasvindas", {nome: "Humberto Luiz"});
-
-    function enviar() {
-        const palavra = document.getElementById("palavra").value;
-        socket.emit("palavra", palavra);
+    function send() {
+        const username = document.getElementById("username").value;
+        const message = document.getElementById("message").value;
+        socket.emit("message:create", {username, message});
     }
-
-    socket.on("resultado", data => {
-        console.log(data);
-    })
 
 </script>

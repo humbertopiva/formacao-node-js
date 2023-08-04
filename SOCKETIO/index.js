@@ -8,12 +8,8 @@ io.on("connection", socket => {
         console.log(`${socket.id} se desconectou`);
     })
 
-    socket.on("boasvindas", data => {
-        console.log(data);
-    })
-
-    socket.on("palavra", data => {
-        socket.emit("resultado", `${data} é o resultado.`);
+    socket.on("message:create", data => {
+        io.emit("message:show", data);
     })
 })
 
